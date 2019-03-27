@@ -1,4 +1,6 @@
 import re
+import pandas as pd
+import urllib.parse
 from collections import namedtuple
 
 
@@ -6,6 +8,9 @@ text_doc_head_pattern_str = "<doc id=\"(.*?)\" url=\"(.*?)\" title=\"(.*?)\""
 anchor_pattern_str = "<a href=\"(.*?)\">(.*?)</a>"
 
 WikiTextInfo = namedtuple('WikiTextInfo', ['title', 'wid', 'text'])
+
+util_page_title_starts = ['Wikipedia:', 'File:', 'Draft:', 'Template:', 'MediaWiki:', 'Category:',
+                          'Help:', 'wikt:', 'List of']
 
 
 def next_xml_page(f):
@@ -55,7 +60,22 @@ def find_anchors(text_with_anchors):
     miter = re.finditer(anchor_pattern_str, text_with_anchors)
     anchors = list()
     for m in miter:
-        mention_str = m.group(0)
-        target = m.group(1)
+        target = urllib.parse.unquote(m.group(1))
+        mention_str = m.group(2)
         anchors.append((mention_str, target))
     return anchors
+
+
+def load_redirects_file(filename):
+    with open(filename, encoding='utf-8') as f:
+        df = pd.read_csv(f, na_filter=False)
+
+    redirects_dict = {title_from: title_to for title_from, title_to in df.itertuples(False, None)}
+    return redirects_dict
+
+
+def is_not_util_page(page_title: str):
+    for s in util_page_title_starts:
+        if page_title.startswith(s):
+            return False
+    return True
