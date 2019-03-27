@@ -1,4 +1,5 @@
 import bz2
+import gzip
 import os
 import pandas as pd
 import re
@@ -65,12 +66,17 @@ def gen_title_wid_file(wiki_file, output_file):
         pd.DataFrame(title_wid_tups, columns=['title', 'wid']).to_csv(fout, index=False)
 
 
-res_dir = 'd:/data/res'
-# wiki_file = os.path.join(res_dir, 'wiki/enwiki-20190101-pages-articles-multistream.xml.bz2')
-# redirects_file = os.path.join(res_dir, 'wiki/enwiki-20190101-redirects.txt')
-# title_wid_file = os.path.join(res_dir, 'wiki/enwiki-20190101-title-wid.txt')
-wiki_file = os.path.join(res_dir, 'wiki/enwiki-20151002-pages-articles.xml.bz2')
-redirects_file = os.path.join(res_dir, 'wiki/enwiki-20151002-redirects.txt')
-title_wid_file = os.path.join(res_dir, 'wiki/enwiki-20151002-title-wid.txt')
-# gen_redirects_file(wiki_file, redirects_file)
-gen_title_wid_file(wiki_file, title_wid_file)
+def gen_mention_str_to_target_cnt_file(wiki_text_file, output_file):
+    # f = open(wiki_text_file, encoding='utf-8')
+    f = gzip.open(wiki_text_file, 'rt', encoding='utf-8')
+    cnt = 0
+    while True:
+        text_info = wikiutils.next_text_page(f)
+        print(text_info.wid, text_info.title)
+        if text_info is None:
+            break
+
+        cnt += 1
+        if cnt > 10:
+            break
+    f.close()
