@@ -5,6 +5,8 @@ import os
 import wikiutils
 
 
+print('2342'.isdigit())
+exit()
 res_dir = 'd:/data/res'
 mid_wid_file = os.path.join(res_dir, 'freebase/mid-wiki-id.txt')
 title_wid_file = os.path.join(res_dir, 'wiki/el/enwiki-20151002-title-wid-entityonly.txt')

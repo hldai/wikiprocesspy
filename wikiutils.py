@@ -91,21 +91,28 @@ def is_not_util_page_title(page_title: str):
     return True
 
 
-def __starts_with_year(title: str):
-    if len(title) < 4:
-        return False
-    for i in range(4):
-        if not title[i].isdigit():
-            return False
-    return True
+def __num_starting_digits(title: str):
+    cnt = 0
+    while cnt < len(title) and title[cnt].isdigit():
+        cnt += 1
+    return cnt
 
 
 def is_special_intro_title(page_title: str):
+    n = __num_starting_digits(page_title)
+    if n > 0:
+        if len(page_title) == n:
+            return True
+        tmp_str = page_title[n:]
+        if tmp_str == ' BC' or tmp_str == 's BC' or tmp_str == 's':
+            return True
+        if tmp_str.startswith(' in') or tmp_str.startswith('s in'):
+            return True
+        if tmp_str.startswith('BC in') or tmp_str.startswith('s BC in'):
+            return True
+
     if ' of' not in page_title and ' in' not in page_title:
         return False
-
-    if len(page_title) > 7 and __starts_with_year(page_title) and page_title[4:7] == ' in':
-        return True
 
     for s in special_intro_title_starts:
         if page_title.startswith(s):

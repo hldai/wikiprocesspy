@@ -167,8 +167,8 @@ def gen_entity_only_title_wid_file(xml_wiki_file, redirects_file, output_file):
             break
 
         cnt += 1
-        if cnt > 200000:
-            break
+        # if cnt > 200000:
+        #     break
         if cnt % 100000 == 0:
             print(cnt, len(title_wid_tups), time.time() - time_start)
 
