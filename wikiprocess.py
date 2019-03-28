@@ -68,7 +68,17 @@ def gen_title_wid_file(wiki_file, output_file):
         pd.DataFrame(title_wid_tups, columns=['title', 'wid']).to_csv(fout, index=False)
 
 
-def gen_mention_str_to_target_cnt_file(wiki_text_file, redirects_file, output_file):
+def __get_linked_cnts_dict(mstr_target_cnts_dict):
+    linked_cnts_dict = dict()
+    for mstr, (target_titles, cnts) in mstr_target_cnts_dict.items():
+        for title, cnt in zip(target_titles, cnts):
+            cnt = linked_cnts_dict.get(title, 0)
+            linked_cnts_dict[title] = cnt + 1
+    return linked_cnts_dict
+
+
+def gen_mention_str_to_target_cnt_file(wiki_text_file, redirects_file, output_mstr_target_cnt_file,
+                                       output_entity_linked_cnts_file):
     print('loading {} ... '.format(redirects_file), end='', flush=True)
     redirects_dict = wikiutils.load_redirects_file(redirects_file)
     print('done')
@@ -91,6 +101,9 @@ def gen_mention_str_to_target_cnt_file(wiki_text_file, redirects_file, output_fi
                 continue
             if utils.has_sep_space(mention_str) or utils.has_sep_space(target):
                 continue
+
+            if target[0].islower():
+                target = target[0].upper() if len(target) == 1 else target[0].upper() + target[1:]
 
             target_title = redirects_dict.get(target, target)
             if not wikiutils.is_not_util_page(target_title):
@@ -116,10 +129,19 @@ def gen_mention_str_to_target_cnt_file(wiki_text_file, redirects_file, output_fi
         #     break
     f.close()
 
+    entity_linked_cnts_dict = __get_linked_cnts_dict(mention_str_targets_dict)
+    entity_linked_cnt_tups = list(entity_linked_cnts_dict.items())
+    entity_linked_cnt_tups.sort(key=lambda x: x[0])
+    print('writing {} ...'.format(output_entity_linked_cnts_file), end=' ', flush=True)
+    with open(output_entity_linked_cnts_file, 'w', encoding='utf-8', newline='\n') as fout:
+        pd.DataFrame(entity_linked_cnt_tups, columns=['title', 'cnt']).to_csv(
+            fout, index=False, line_terminator='\n')
+    print('done')
+
     mention_str_targets_tups = list(mention_str_targets_dict.items())
     mention_str_targets_tups.sort(key=lambda x: x[0])
-    fout = open(output_file, 'w', encoding='utf-8', newline='\n')
-    print('writing {} ... '.format(output_file), end='', flush=True)
+    fout = open(output_mstr_target_cnt_file, 'w', encoding='utf-8', newline='\n')
+    print('writing {} ... '.format(output_mstr_target_cnt_file), end='', flush=True)
     for mention_str, target_cnts_tup in mention_str_targets_tups:
         target_cnt_tups = list(zip(*target_cnts_tup))
         target_cnt_tups.sort(key=lambda x: -x[1])
