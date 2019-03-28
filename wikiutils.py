@@ -9,8 +9,13 @@ anchor_pattern_str = "<a href=\"(.*?)\">(.*?)</a>"
 
 WikiTextInfo = namedtuple('WikiTextInfo', ['title', 'wid', 'text'])
 
-util_page_title_starts = ['Wikipedia:', 'File:', 'Draft:', 'Template:', 'MediaWiki:', 'Category:',
-                          'Help:', 'wikt:', 'List of']
+no_comma_util_title_starts = ['List of', 'Lists of']
+comma_util_title_starts = ['Wikipedia:', 'File:', 'Draft:', 'Template:', 'MediaWiki:', 'Category:',
+                           'Help:', 'wikt:', 'Portal:']
+# code judges based on 'of' and 'in'
+special_intro_title_starts = ['Geography of', 'Monarchy of', 'History of', 'Politics of', 'Economy of',
+                              'Transport in', 'Foreign relations of', 'Foreign Relations of',
+                              'Demographics of', 'Transportation in', 'Telecommunications in', 'Culture of']
 
 
 def next_xml_page(f):
@@ -74,8 +79,35 @@ def load_redirects_file(filename):
     return redirects_dict
 
 
-def is_not_util_page(page_title: str):
-    for s in util_page_title_starts:
+def is_not_util_page_title(page_title: str):
+    if ':' in page_title:
+        for s in comma_util_title_starts:
+            if page_title.startswith(s):
+                return False
+
+    for s in no_comma_util_title_starts:
         if page_title.startswith(s):
             return False
     return True
+
+
+def __starts_with_year(title: str):
+    if len(title) < 4:
+        return False
+    for i in range(4):
+        if not title[i].isdigit():
+            return False
+    return True
+
+
+def is_special_intro_title(page_title: str):
+    if ' of' not in page_title and ' in' not in page_title:
+        return False
+
+    if len(page_title) > 7 and __starts_with_year(page_title) and page_title[4:7] == ' in':
+        return True
+
+    for s in special_intro_title_starts:
+        if page_title.startswith(s):
+            return True
+    return False

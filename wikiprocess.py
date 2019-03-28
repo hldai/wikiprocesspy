@@ -1,5 +1,6 @@
 import bz2
 import gzip
+import time
 from bisect import bisect_left
 import os
 import pandas as pd
@@ -72,8 +73,8 @@ def __get_linked_cnts_dict(mstr_target_cnts_dict):
     linked_cnts_dict = dict()
     for mstr, (target_titles, cnts) in mstr_target_cnts_dict.items():
         for title, cnt in zip(target_titles, cnts):
-            cnt = linked_cnts_dict.get(title, 0)
-            linked_cnts_dict[title] = cnt + 1
+            cur_cnt = linked_cnts_dict.get(title, 0)
+            linked_cnts_dict[title] = cur_cnt + cnt
     return linked_cnts_dict
 
 
@@ -149,3 +150,53 @@ def gen_mention_str_to_target_cnt_file(wiki_text_file, redirects_file, output_ms
             fout.write('{}\t{}\t{}\n'.format(mention_str, target_title, cnt))
     fout.close()
     print('done')
+
+
+def gen_entity_only_title_wid_file(xml_wiki_file, redirects_file, output_file):
+    redirects_dict = wikiutils.load_redirects_file(redirects_file)
+
+    f = bz2.open(xml_wiki_file, 'rt', encoding='utf-8')
+    title_wid_tups = list()
+    cnt = 0
+    p_normal = re.compile(page_pattern, re.DOTALL)
+    # p_redirect = re.compile(redirect_page_pattern, re.DOTALL)
+    time_start = time.time()
+    while True:
+        page_xml = wikiutils.next_xml_page(f)
+        if not page_xml:
+            break
+
+        cnt += 1
+        if cnt > 200000:
+            break
+        if cnt % 100000 == 0:
+            print(cnt, len(title_wid_tups), time.time() - time_start)
+
+        m = p_normal.match(page_xml)
+        if not m:
+            print('not matched')
+            print(page_xml)
+            continue
+
+        if '{{disambiguation}}' in page_xml:
+            # print(m.group(1))
+            continue
+
+        title = m.group(1)
+
+        if not wikiutils.is_not_util_page_title(title):
+            continue
+        # m_redirect = p_redirect.match(page_xml)
+        # if m_redirect:
+        #     continue
+        if title in redirects_dict:
+            continue
+        if wikiutils.is_special_intro_title(title):
+            continue
+
+        wid = int(m.group(2))
+        title_wid_tups.append((title, wid))
+    f.close()
+
+    with open(output_file, 'w', encoding='utf-8', newline='\n') as fout:
+        pd.DataFrame(title_wid_tups, columns=['title', 'wid']).to_csv(fout, index=False, line_terminator='\n')
