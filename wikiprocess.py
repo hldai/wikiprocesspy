@@ -107,7 +107,7 @@ def gen_mention_str_to_target_cnt_file(wiki_text_file, redirects_file, output_ms
                 target = target[0].upper() if len(target) == 1 else target[0].upper() + target[1:]
 
             target_title = redirects_dict.get(target, target)
-            if not wikiutils.is_not_util_page(target_title):
+            if not wikiutils.is_not_util_page_title(target_title):
                 continue
 
             # print(mention_str, target_title)
