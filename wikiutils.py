@@ -9,13 +9,13 @@ anchor_pattern_str = "<a href=\"(.*?)\">(.*?)</a>"
 
 WikiTextInfo = namedtuple('WikiTextInfo', ['title', 'wid', 'text'])
 
-no_comma_util_title_starts = ['List of', 'Lists of']
-comma_util_title_starts = ['Wikipedia:', 'File:', 'Draft:', 'Template:', 'MediaWiki:', 'Category:',
-                           'Help:', 'wikt:', 'Portal:']
+no_comma_util_title_prefixs = ['List of', 'Lists of', 'Index of']
+comma_util_title_prefixs = ['Wikipedia:', 'File:', 'Draft:', 'Template:', 'MediaWiki:', 'Category:',
+                            'Help:', 'wikt:', 'Portal:']
 # code judges based on 'of' and 'in'
-special_intro_title_starts = ['Geography of', 'Monarchy of', 'History of', 'Politics of', 'Economy of',
-                              'Transport in', 'Foreign relations of', 'Foreign Relations of',
-                              'Demographics of', 'Transportation in', 'Telecommunications in', 'Culture of']
+special_intro_title_prefixs = ['Geography of', 'Monarchy of', 'History of', 'Politics of', 'Economy of',
+                               'Transport in', 'Foreign relations of', 'Foreign Relations of',
+                               'Demographics of', 'Transportation in', 'Telecommunications in', 'Culture of']
 
 
 def next_xml_page(f):
@@ -81,11 +81,11 @@ def load_redirects_file(filename):
 
 def is_not_util_page_title(page_title: str):
     if ':' in page_title:
-        for s in comma_util_title_starts:
+        for s in comma_util_title_prefixs:
             if page_title.startswith(s):
                 return False
 
-    for s in no_comma_util_title_starts:
+    for s in no_comma_util_title_prefixs:
         if page_title.startswith(s):
             return False
     return True
@@ -114,7 +114,7 @@ def is_special_intro_title(page_title: str):
     if ' of' not in page_title and ' in' not in page_title:
         return False
 
-    for s in special_intro_title_starts:
+    for s in special_intro_title_prefixs:
         if page_title.startswith(s):
             return True
     return False
