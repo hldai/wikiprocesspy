@@ -15,6 +15,6 @@ mention_str_target_cnt_file = os.path.join(res_dir, 'wiki/enwiki-20151002-mentio
 entity_linked_cnt_file = os.path.join(res_dir, 'wiki/enwiki-20151002-entity-linked-cnts.txt')
 # wikiprocess.gen_redirects_file(wiki_file, redirects_file)
 # wikiprocess.gen_title_wid_file(wiki_file, title_wid_file)
-# wikiprocess.gen_entity_only_title_wid_file(wiki_file, redirects_file, entityonly_title_wid_file)
+wikiprocess.gen_entity_only_title_wid_file(wiki_file, redirects_file, entityonly_title_wid_file)
 # wikiprocess.gen_mention_str_to_target_cnt_file(
 #     wiki_text_file, redirects_file, mention_str_target_cnt_file, entity_linked_cnt_file)
