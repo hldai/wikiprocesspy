@@ -152,13 +152,14 @@ def gen_mention_str_to_target_cnt_file(wiki_text_file, redirects_file, output_ms
     print('done')
 
 
+# TODO more disambiguation cases
 def gen_entity_only_title_wid_file(xml_wiki_file, redirects_file, output_file):
     redirects_dict = wikiutils.load_redirects_file(redirects_file)
 
     title_wid_tups = list()
     cnt = 0
     p_normal = re.compile(page_pattern, re.DOTALL)
-    p_disamb = re.compile(r'({{disambiguation|{{surname)')
+    p_disamb = re.compile(r'({{[D|d]isambig|{{surname|"preserve">.*\n?.*may refer to)')
     # p_redirect = re.compile(redirect_page_pattern, re.DOTALL)
     time_start = time.time()
     f = bz2.open(xml_wiki_file, 'rt', encoding='utf-8')
@@ -179,12 +180,16 @@ def gen_entity_only_title_wid_file(xml_wiki_file, redirects_file, output_file):
             print(page_xml)
             continue
 
+        # if m.group(1) == 'Osborne':
+        #     print(page_xml)
+        #     exit()
+        # else:
+        #     continue
+
         m_disamb = p_disamb.search(page_xml)
         if m_disamb:
-            # print(m.group(1))
+            # print(m.group(1), m_disamb.group(1))
             continue
-        # if '{{disambiguation' in page_xml or '{{surname' in page_xml:
-        #     continue
 
         title = m.group(1)
 
