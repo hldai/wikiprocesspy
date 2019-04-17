@@ -118,3 +118,9 @@ def is_special_intro_title(page_title: str):
         if page_title.startswith(s):
             return True
     return False
+
+
+def load_linked_cnts_file(filename):
+    with open(filename, encoding='utf-8') as f:
+        df = pd.read_csv(f, na_filter=False)
+    return {title: cnt for title, cnt in df.itertuples(False, None)}
