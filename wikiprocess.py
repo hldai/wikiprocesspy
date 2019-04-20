@@ -163,7 +163,7 @@ def gen_entity_only_title_wid_file(xml_wiki_file, redirects_file, output_file):
     # p_redirect = re.compile(redirect_page_pattern, re.DOTALL)
     time_start = time.time()
     f = bz2.open(xml_wiki_file, 'rt', encoding='utf-8')
-    interested_wids = {26741, 3762139, 20833274, 1699539}
+    interested_wids = {919728, 353781, 66513, 83750, 842061, 183525}
     while True:
         page_xml = wikiutils.next_xml_page(f)
         if not page_xml:
@@ -188,7 +188,8 @@ def gen_entity_only_title_wid_file(xml_wiki_file, redirects_file, output_file):
         #     continue
 
         m_disamb = p_disamb.search(page_xml)
-        if m_disamb and not page_xml[m_disamb.start():].startswith('{{disambiguation needed'):
+        if m_disamb and not page_xml[m_disamb.start():].startswith(
+                '{{disambiguation needed') and not page_xml[m_disamb.start():].startswith('{{Disambiguation needed'):
             # print(m.group(1), m_disamb.group(1))
             continue
 
