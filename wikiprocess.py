@@ -78,8 +78,8 @@ def __get_linked_cnts_dict(mstr_target_cnts_dict):
     return linked_cnts_dict
 
 
-def gen_mention_str_to_target_cnt_file(wiki_text_file, redirects_file, output_mstr_target_cnt_file,
-                                       output_entity_linked_cnts_file):
+def gen_mention_str_to_target_cnt_file(wiki_text_file, redirects_file, to_lower, norm_mstr,
+                                       output_mstr_target_cnt_file, output_entity_linked_cnts_file):
     print('loading {} ... '.format(redirects_file), end='', flush=True)
     redirects_dict = wikiutils.load_redirects_file(redirects_file)
     print('done')
@@ -96,7 +96,13 @@ def gen_mention_str_to_target_cnt_file(wiki_text_file, redirects_file, output_ms
         anchors = wikiutils.find_anchors(text_info.text)
         # print(text_info.wid, text_info.title)
         for mention_str, target in anchors:
+            pstr = mention_str
+            if to_lower:
+                mention_str = mention_str.lower()
+            if norm_mstr:
+                mention_str = utils.norm_mention_str(mention_str.lower())
             mention_str = mention_str.strip()
+            # print(pstr, '->', mention_str)
             target = target.strip()
             if not mention_str or not target or target.startswith('http://') or target.startswith('https://'):
                 continue
@@ -130,14 +136,15 @@ def gen_mention_str_to_target_cnt_file(wiki_text_file, redirects_file, output_ms
         #     break
     f.close()
 
-    entity_linked_cnts_dict = __get_linked_cnts_dict(mention_str_targets_dict)
-    entity_linked_cnt_tups = list(entity_linked_cnts_dict.items())
-    entity_linked_cnt_tups.sort(key=lambda x: x[0])
-    print('writing {} ...'.format(output_entity_linked_cnts_file), end=' ', flush=True)
-    with open(output_entity_linked_cnts_file, 'w', encoding='utf-8', newline='\n') as fout:
-        pd.DataFrame(entity_linked_cnt_tups, columns=['title', 'cnt']).to_csv(
-            fout, index=False, line_terminator='\n')
-    print('done')
+    if output_entity_linked_cnts_file is not None:
+        entity_linked_cnts_dict = __get_linked_cnts_dict(mention_str_targets_dict)
+        entity_linked_cnt_tups = list(entity_linked_cnts_dict.items())
+        entity_linked_cnt_tups.sort(key=lambda x: x[0])
+        print('writing {} ...'.format(output_entity_linked_cnts_file), end=' ', flush=True)
+        with open(output_entity_linked_cnts_file, 'w', encoding='utf-8', newline='\n') as fout:
+            pd.DataFrame(entity_linked_cnt_tups, columns=['title', 'cnt']).to_csv(
+                fout, index=False, line_terminator='\n')
+        print('done')
 
     mention_str_targets_tups = list(mention_str_targets_dict.items())
     mention_str_targets_tups.sort(key=lambda x: x[0])
