@@ -233,3 +233,19 @@ def gen_core_title_wid_file(title_wid_file, linked_cnts_file, output_file):
 
     with open(output_file, 'w', encoding='utf-8', newline='\n') as fout:
         pd.DataFrame(core_title_wid_tups, columns=['title', 'wid']).to_csv(fout, index=False, line_terminator='\n')
+
+
+# entity only entries mentioned at least N times
+def gen_core_wid_vocab_file(title_wid_file, linked_cnts_file, min_times_linkd, output_file):
+    with open(title_wid_file, encoding='utf-8') as f:
+        df_title_wid = pd.read_csv(f, na_filter=False)
+    linked_cnts_dict = wikiutils.load_linked_cnts_file(linked_cnts_file)
+    core_wids = list()
+    for title, wid in df_title_wid.itertuples(False, None):
+        linked_cnt = linked_cnts_dict.get(title, 0)
+        if linked_cnt >= min_times_linkd:
+            core_wids.append(wid)
+
+    with open(output_file, 'w', encoding='utf-8', newline='\n') as fout:
+        for wid in core_wids:
+            fout.write('{}\n'.format(wid))
