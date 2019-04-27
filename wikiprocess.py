@@ -221,14 +221,14 @@ def gen_entity_only_title_wid_file(xml_wiki_file, redirects_file, output_file):
 
 
 # entity only entries mentioned at least once
-def gen_core_title_wid_file(title_wid_file, linked_cnts_file, output_file):
+def gen_core_title_wid_file(title_wid_file, linked_cnts_file, min_linked_times, output_file):
     with open(title_wid_file, encoding='utf-8') as f:
         df_title_wid = pd.read_csv(f, na_filter=False)
     linked_cnts_dict = wikiutils.load_linked_cnts_file(linked_cnts_file)
     core_title_wid_tups = list()
     for title, wid in df_title_wid.itertuples(False, None):
         linked_cnt = linked_cnts_dict.get(title, 0)
-        if linked_cnt > 0:
+        if linked_cnt >= min_linked_times:
             core_title_wid_tups.append((title, wid))
 
     with open(output_file, 'w', encoding='utf-8', newline='\n') as fout:
