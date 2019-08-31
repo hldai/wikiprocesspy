@@ -62,14 +62,14 @@ def gen_title_wid_file(wiki_file, output_file):
 
         title = m.group(1)
         wid = int(m.group(2))
-        if title == 'Cardi B':
-            print(page_xml)
-            exit()
+        # if title == 'Cardi B':
+        #     print(page_xml)
+        #     exit()
         title_wid_tups.append((title, wid))
     f.close()
 
-    # with open(output_file, 'w', encoding='utf-8', newline='\n') as fout:
-    #     pd.DataFrame(title_wid_tups, columns=['title', 'wid']).to_csv(fout, index=False)
+    with open(output_file, 'w', encoding='utf-8', newline='\n') as fout:
+        pd.DataFrame(title_wid_tups, columns=['title', 'wid']).to_csv(fout, index=False)
 
 
 def __get_linked_cnts_dict(mstr_target_cnts_dict):
