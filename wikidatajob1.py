@@ -13,7 +13,8 @@ from specific import wikidatafet
 # subcls_type_cnts_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20150525-fet-subcls-type-cnts.txt')
 
 wikidata_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20190923-all.json.gz')
-cleaned_wikidata_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20190923-fet.json')
+raw_cleaned_wikidata_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20190923-fet.json')
+cleaned_wikidata_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20190923-fet.json.gz')
 insof_type_items_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20190923-fet-insof-items.json')
 subcls_type_items_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20190923-fet-subcls-items.json')
 occupation_type_items_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20190923-fet-occupation-items.json')
@@ -22,10 +23,10 @@ occupation_type_cnts_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-2019
 subcls_type_cnts_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20190923-fet-subcls-type-cnts.txt')
 
 
-wikidataproc.filter_wikidata(wikidata_file, cleaned_wikidata_file)
+# wikidataproc.filter_wikidata(wikidata_file, raw_cleaned_wikidata_file)
 # wikidataproc.check_item(wikidata_file, 'Q18388277')
 # wikidatafet.gen_type_items_file(cleaned_wikidata_file, insof_type_items_file, subcls_type_items_file,
 #                                 occupation_type_items_file)
-# wikidatafet.gen_type_cnts_file(insof_type_items_file, insof_type_cnts_file)
-# wikidatafet.gen_type_cnts_file(occupation_type_items_file, occupation_type_cnts_file)
-# wikidatafet.gen_type_cnts_file(subcls_type_items_file, subcls_type_cnts_file)
+wikidatafet.gen_type_cnts_file(insof_type_items_file, insof_type_cnts_file)
+wikidatafet.gen_type_cnts_file(occupation_type_items_file, occupation_type_cnts_file)
+wikidatafet.gen_type_cnts_file(subcls_type_items_file, subcls_type_cnts_file)

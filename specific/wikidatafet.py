@@ -1,4 +1,5 @@
 import json
+import gzip
 from utils import datautils
 
 
@@ -38,7 +39,10 @@ def gen_type_items_file(cleaned_fet_wikidata_file, insof_output_file, subcls_out
                 target_dict[val] = cnt + 1
 
     subcls_type_cnts_dict, ins_type_cnts_dict, occupation_cnts_dict = dict(), dict(), dict()
-    f = open(cleaned_fet_wikidata_file, encoding='utf-8')
+    if cleaned_fet_wikidata_file.endswith('.gz'):
+        f = gzip.open(cleaned_fet_wikidata_file, 'rt', encoding='utf-8')
+    else:
+        f = open(cleaned_fet_wikidata_file, encoding='utf-8')
     for i, line in enumerate(f):
         item = json.loads(line)
 
@@ -58,7 +62,10 @@ def gen_type_items_file(cleaned_fet_wikidata_file, insof_output_file, subcls_out
             cur_item['use_cnt'] = cnt
             fout.write('{}\n'.format(json.dumps(cur_item)))
 
-    f = open(cleaned_fet_wikidata_file, encoding='utf-8')
+    if cleaned_fet_wikidata_file.endswith('.gz'):
+        f = gzip.open(cleaned_fet_wikidata_file, 'rt', encoding='utf-8')
+    else:
+        f = open(cleaned_fet_wikidata_file, encoding='utf-8')
     fout_insof = open(insof_output_file, 'w', encoding='utf-8', newline='\n')
     fout_subcls = open(subcls_output_file, 'w', encoding='utf-8', newline='\n')
     fout_occupation = open(occupation_output_file, 'w', encoding='utf-8', newline='\n')
