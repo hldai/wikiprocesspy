@@ -4,23 +4,50 @@ import json
 VALUE_UNKNOWN = 'UNKNOWN'
 
 
-def get_en_value(value_dict):
-    val = value_dict.get('en', None)
-    return None if val is None else val.get('value', None)
+def get_value_of_language(value_dict, language='en'):
+    lan_val = value_dict.get(language, None)
+    if type(lan_val) == list:
+        all_vals = list()
+        for lv in lan_val:
+            v = lv.get('value')
+            if v is not None:
+                all_vals.append(v)
+        return all_vals
+    else:
+        return None if lan_val is None else lan_val.get('value', None)
 
 
-def get_en_label(entry):
+def get_labels(entry, languages):
     entry_label = entry.get('labels')
-    if entry_label is not None:
-        entry_label = get_en_value(entry_label)
-    return VALUE_UNKNOWN if entry_label is None else entry_label
+    if entry_label is None:
+        return None
+
+    target_labels = dict()
+    for lan in languages:
+        val = get_value_of_language(entry_label, lan)
+        if val is not None:
+            target_labels[lan] = val
+    return target_labels if target_labels else None
+
+
+def get_aliases(entry, languages):
+    aliases = entry.get('aliases')
+    if aliases is None:
+        return None
+    target_aliases = dict()
+    for lan in languages:
+        val = get_value_of_language(aliases, lan)
+        if val is not None:
+            target_aliases[lan] = val
+    return target_aliases if target_aliases else None
 
 
 def get_en_description(entry):
     desc = entry.get('descriptions')
-    if desc is not None:
-        desc = get_en_value(desc)
-    return VALUE_UNKNOWN if desc is None else desc
+    if desc is None:
+        return None
+    desc = get_value_of_language(desc, 'en')
+    return desc
 
 
 def __get_item_id_val_from_claims(entry, property_id):
@@ -58,6 +85,7 @@ def __get_enwiki_title(entry):
 def filter_wikidata(full_data_file, output_file):
     f = gzip.open(full_data_file, 'rt', encoding='utf-8')
     fout = open(output_file, 'w', encoding='utf-8')
+    languages = ['en', 'zh']
     next(f)
     for i, line in enumerate(f):
         line = line.strip()
@@ -68,17 +96,26 @@ def filter_wikidata(full_data_file, output_file):
         else:
             entry = json.loads(line)
 
-        entry_label = get_en_label(entry)
+        entry_labels = get_labels(entry, languages)
+        aliases = get_aliases(entry, languages)
         desc = get_en_description(entry)
 
         insof_vals = __get_item_id_val_from_claims(entry, 'P31')
         occupation_vals = __get_item_id_val_from_claims(entry, 'P106')
+        sublassof_vals = __get_item_id_val_from_claims(entry, 'P279')
         wiki_title = __get_enwiki_title(entry)
 
         claims = entry.get('claims')
         properties = None if claims is None else list(claims.keys())
 
-        cleaned_entry = {'id': entry['id'], 'type': entry['type'], 'label': entry_label, 'desc': desc}
+        cleaned_entry = {'id': entry['id'], 'type': entry['type']}
+        if entry_labels is not None:
+            cleaned_entry['label'] = entry_labels
+        if aliases is not None:
+            cleaned_entry['aliases'] = aliases
+        if desc is not None:
+            cleaned_entry['desc'] = desc
+
         if insof_vals is not None and len(insof_vals) > 0:
             cleaned_entry['insof'] = insof_vals
         if occupation_vals is not None and len(occupation_vals) > 0:
@@ -87,10 +124,37 @@ def filter_wikidata(full_data_file, output_file):
             cleaned_entry['wiki'] = wiki_title
         if properties is not None:
             cleaned_entry['property'] = properties
+        if sublassof_vals is not None:
+            cleaned_entry['subclassof'] = sublassof_vals
         fout.write('{}\n'.format(json.dumps(cleaned_entry)))
-        # if i > 100:
+        # if i > 10000:
         #     break
         if i % 100000 == 0:
             print(i)
     f.close()
     fout.close()
+
+
+def check_item(filename, qid):
+    f = gzip.open(filename, 'rt', encoding='utf-8')
+    next(f)
+    for i, line in enumerate(f):
+        line = line.strip()
+        # print(line)
+        if line[-1] == ',':
+            entry = json.loads(line[:-1])
+        elif line[-1] == ']':
+            continue
+        else:
+            entry = json.loads(line)
+
+        cur_qid = entry['id']
+        if cur_qid == qid:
+            print(entry)
+            print(entry['aliases'])
+            break
+        # if i > 10:
+        #     break
+        if i % 1000000 == 0:
+            print(i)
+    f.close()
