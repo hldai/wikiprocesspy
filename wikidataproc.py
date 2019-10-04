@@ -85,7 +85,7 @@ def __get_enwiki_title(entry):
 def filter_wikidata(full_data_file, output_file):
     f = gzip.open(full_data_file, 'rt', encoding='utf-8')
     fout = open(output_file, 'w', encoding='utf-8')
-    languages = ['en', 'zh']
+    languages = ['en', 'zh', 'zh-hans', 'zh-hant', 'zh-cn', 'zh-tw', 'zh-hk']
     next(f)
     for i, line in enumerate(f):
         line = line.strip()
@@ -104,6 +104,9 @@ def filter_wikidata(full_data_file, output_file):
         occupation_vals = __get_item_id_val_from_claims(entry, 'P106')
         sublassof_vals = __get_item_id_val_from_claims(entry, 'P279')
         wiki_title = __get_enwiki_title(entry)
+
+        # if occupation_vals:
+        #     print(entry)
 
         claims = entry.get('claims')
         properties = None if claims is None else list(claims.keys())
@@ -127,7 +130,7 @@ def filter_wikidata(full_data_file, output_file):
         if sublassof_vals is not None:
             cleaned_entry['subclassof'] = sublassof_vals
         fout.write('{}\n'.format(json.dumps(cleaned_entry)))
-        # if i > 10000:
+        # if i > 1000:
         #     break
         if i % 100000 == 0:
             print(i)
