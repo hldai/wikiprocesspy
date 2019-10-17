@@ -21,12 +21,14 @@ occupation_type_items_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-201
 insof_type_cnts_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20190923-fet-insof-type-cnts.txt')
 occupation_type_cnts_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20190923-fet-occupation-type-cnts.txt')
 subcls_type_cnts_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20190923-fet-subcls-type-cnts.txt')
+wikidata_wikipedia_map_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20190923-wikipedia-map.txt')
 
 
-wikidataproc.filter_wikidata(wikidata_file, raw_cleaned_wikidata_file)
+# wikidataproc.filter_wikidata(wikidata_file, raw_cleaned_wikidata_file)
 # wikidataproc.check_item(wikidata_file, 'Q18388277')
 # wikidatafet.gen_type_items_file(cleaned_wikidata_file, insof_type_items_file, subcls_type_items_file,
 #                                 occupation_type_items_file)
 # wikidatafet.gen_type_cnts_file(insof_type_items_file, insof_type_cnts_file)
 # wikidatafet.gen_type_cnts_file(occupation_type_items_file, occupation_type_cnts_file)
 # wikidatafet.gen_type_cnts_file(subcls_type_items_file, subcls_type_cnts_file)
+wikidataproc.gen_wikidata_wikipedia_map_file(cleaned_wikidata_file, wikidata_wikipedia_map_file)

@@ -1,5 +1,6 @@
 import gzip
 import json
+from utils import datautils
 
 VALUE_UNKNOWN = 'UNKNOWN'
 
@@ -161,3 +162,25 @@ def check_item(filename, qid):
         if i % 1000000 == 0:
             print(i)
     f.close()
+
+
+def gen_wikidata_wikipedia_map_file(wikidata_items_file, output_file):
+    f = gzip.open(wikidata_items_file, 'rt', encoding='utf-8')
+    next(f)
+    value_tups = list()
+    for i, line in enumerate(f):
+        item = json.loads(line)
+        item_id = item['id']
+        item_label = item.get('label')
+        if item_label:
+            item_label = item_label.get('en')
+        wiki_title = item.get('wiki')
+
+        if item_label is not None and wiki_title is not None:
+            value_tups.append((item_id, item_label, wiki_title))
+
+        if i % 1000000 == 0:
+            print(i)
+    f.close()
+
+    datautils.save_csv(value_tups, ['id', 'label', 'wiki'], output_file)
