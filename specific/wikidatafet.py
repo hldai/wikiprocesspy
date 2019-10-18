@@ -82,3 +82,33 @@ def gen_type_items_file(cleaned_fet_wikidata_file, insof_output_file, subcls_out
     fout_insof.close()
     fout_subcls.close()
     fout_occupation.close()
+
+
+def gen_wid_wikidata_types_file(wikidata_file, wid_title_file, output_file):
+    print('loading {} ...'.format(wid_title_file), end=' ')
+    wiki_title_wid_dict = datautils.load_wiki_title_wid_file(wid_title_file)
+    print('done')
+
+    f = gzip.open(wikidata_file, 'rt', encoding='utf-8')
+    fout = open(output_file, 'w', encoding='utf-8', newline='\n')
+    for i, line in enumerate(f):
+        if i % 1000000 == 0:
+            print(i)
+        # print(line.strip())
+        item = json.loads(line)
+        wiki_title = item.get('wiki')
+        if wiki_title is None:
+            continue
+
+        wid = wiki_title_wid_dict.get(wiki_title)
+        if wid is not None:
+            # print(item)
+            # print(wiki_title, wid)
+            insof = ','.join(item.get('insof', list()))
+            occupation = ','.join(item.get('occupation', list()))
+            subcls = ','.join(item.get('subclassof', list()))
+            fout.write('{}\t{}\t{}\t{}\n'.format(wid, insof, occupation, subcls))
+        # if i > 100:
+        #     break
+    f.close()
+    fout.close()
