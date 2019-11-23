@@ -25,9 +25,9 @@ def gen_type_cnts_file(type_items_file, output_file):
                 type_name_str = ';'.join([label] + aliases)
                 # print(type_name_str)
             cnt = item.get('use_cnt', 0)
-            type_cnts.append((type_name_str, cnt))
-    type_cnts.sort(key=lambda x: -x[1])
-    datautils.save_csv(type_cnts, ['type', 'cnt'], output_file)
+            type_cnts.append((item['id'], type_name_str, cnt))
+    type_cnts.sort(key=lambda x: -x[2])
+    datautils.save_csv(type_cnts, ['id', 'type', 'cnt'], output_file)
 
 
 def gen_type_items_file(cleaned_fet_wikidata_file, insof_output_file, subcls_output_file, occupation_output_file):
