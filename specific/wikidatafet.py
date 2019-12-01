@@ -107,7 +107,7 @@ def gen_wid_wikidata_types_file(wikidata_file, wid_title_file, output_file):
             insof = ','.join(item.get('insof', list()))
             occupation = ','.join(item.get('occupation', list()))
             subcls = ','.join(item.get('subclassof', list()))
-            fout.write('{}\t{}\t{}\t{}\n'.format(wid, insof, occupation, subcls))
+            fout.write('{}\t{}\t{}\t{}\t{}\n'.format(wid, item['id'], insof, occupation, subcls))
         # if i > 100:
         #     break
     f.close()

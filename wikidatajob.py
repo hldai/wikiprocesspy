@@ -23,7 +23,7 @@ occupation_type_cnts_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-2019
 subcls_type_cnts_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20190923-fet-subcls-type-cnts.txt')
 wikidata_wikipedia_map_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20190923-wikipedia-map.txt')
 wiki_title_wid_file = os.path.join(config.RES_DIR, 'wiki/enwiki-20190101-title-wid.txt')
-wid_wikidata_types_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20190923-wid-types.txt')
+wid_wikidata_types_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-20190923-wid-types-tmp.txt')
 
 
 # wikidataproc.filter_wikidata(wikidata_file, raw_cleaned_wikidata_file)
@@ -34,4 +34,4 @@ wid_wikidata_types_file = os.path.join(config.RES_DIR, 'wikidata/wikidata-201909
 # wikidatafet.gen_type_cnts_file(occupation_type_items_file, occupation_type_cnts_file)
 # wikidatafet.gen_type_cnts_file(subcls_type_items_file, subcls_type_cnts_file)
 # wikidataproc.gen_wikidata_wikipedia_map_file(cleaned_wikidata_file, wikidata_wikipedia_map_file)
-# wikidatafet.gen_wid_wikidata_types_file(cleaned_wikidata_file, wiki_title_wid_file, wid_wikidata_types_file)
+wikidatafet.gen_wid_wikidata_types_file(cleaned_wikidata_file, wiki_title_wid_file, wid_wikidata_types_file)
